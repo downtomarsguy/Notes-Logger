@@ -1,4 +1,7 @@
+// existing imports
 import {
+  Form,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -28,6 +31,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&display=swap');
+        </style>
         <Meta />
         <Links />
       </head>
