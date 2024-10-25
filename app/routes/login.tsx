@@ -28,7 +28,7 @@ export const meta: MetaFunction = () => {
 
 export default function App() {
   const [pc, setPc] = useState<any[] | null>(null);
-  const [inputPasscode, setInputPasscode] = useState(""); // State for input
+  const [inputPasscode, setInputPasscode] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
