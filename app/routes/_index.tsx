@@ -7,7 +7,7 @@ import { FaGithub } from "react-icons/fa";
 export const meta: MetaFunction = () => {
   return [
     { title: "Home" },
-    { name: "description", content: "Notes-Logger Login" },
+    { name: "description", content: "Notes-Logger Homepage" },
   ];
 };
 
@@ -20,7 +20,7 @@ export default function Index() {
           <span className="text-xl font-bold">Notes Logger</span>
         </div>
 
-        <div className="space-x-4">
+        <div className="space-x-5">
           <a href="https://github.com/deitysilver/Notes-Logger" className="text-gray-300 font-semibold hover:text-white no-underline">Github</a>
           <Link to="/login" className="text-gray-300 font-semibold hover:text-white no-underline">Login</Link>
         </div>
