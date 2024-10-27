@@ -1,18 +1,18 @@
 import { json } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/node";
 import { useNavigate } from "@remix-run/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLoaderData } from "@remix-run/react";
 import { createServerClient } from '@supabase/auth-helpers-remix';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 
-// Import banners
+// import banners
 import mathBanner from "../assets/math-banner.jpg";
 
-// Import icons
+// import icons
 import { IoMdSend } from "react-icons/io";
 
-// Meta configuration
+// meta configuration
 export const meta: MetaFunction = () => {
   return [
     { title: "Login" },
@@ -33,25 +33,55 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   );
 
   const { data } = await supabaseClient.from('passcode').select('*');
-
+  
   return json(
-    { data },
+    { data, supabaseUrl: process.env.SUPABASE_URL, supabaseKey: process.env.SUPABASE_KEY },
     {
       headers: response.headers,
     }
   );
 };
 
+
 export default function App() {
-  const [inputPasscode, setInputPasscode] = useState("");
+  const [inputPc, setInputPc] = useState("");
+  const [userIP, setUserIP] = useState("");
   const navigate = useNavigate();
-  const { data } = useLoaderData<{ data: Passcode[] }>(); 
+  const { data, supabaseUrl, supabaseKey } = useLoaderData<{ data: Passcode[], supabaseUrl: string, supabaseKey: string }>();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); 
-    console.log(JSON.stringify(data, null));
+  useEffect(() => {
+    const fetchIP = async () => {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        setUserIP(data.ip);
+      } catch (error) {
+        console.error('Error fetching IPA:', error);
+      }
+    };
 
-    if (data && data.length > 0 && inputPasscode === data[0].passcode) {
+    fetchIP();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (data && data.length > 0 && inputPc === data[0].passcode) {
+      if (userIP) {
+        const supabaseClient = createServerClient(
+          supabaseUrl,
+          supabaseKey,
+          { request: new Request(''), response: new Response() }
+        );
+
+        const { error } = await supabaseClient
+          .from('users')
+          .insert([{ ip: userIP }]);
+
+        if (error) {
+          console.error('Error inserting IP address:', error);
+        }
+      }
       navigate("/dashboard");
     } else {
       alert("Invalid passcode. Please try again.");
@@ -67,8 +97,8 @@ export default function App() {
             type="password"
             name="passcode"
             placeholder="Enter passcode.."
-            value={inputPasscode}
-            onChange={(e) => setInputPasscode(e.target.value)}
+            value={inputPc}
+            onChange={(e) => setInputPc(e.target.value)}
             className="bg-white bg-opacity-20 px-3 py-2 text-base rounded-sm font-sans"
           /> <br />
           <button type="submit" className="flex items-center bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 px-3 py-2 mt-2 rounded-sm">
