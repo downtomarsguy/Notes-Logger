@@ -75,7 +75,6 @@ export default function App() {
             <span className="mr-2 font-sans text-base">Submit</span>
             <IoMdSend />
           </button>
-          <pre>{JSON.stringify(data, null)}</pre>
         </form>
       </div>
       <div className="w-3/5 relative">
