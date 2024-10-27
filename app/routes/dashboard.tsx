@@ -14,7 +14,7 @@ import {
 export default function App() {
   return (
     <div className="w-96 mx-auto p-4">
-      
+      hello
     </div>
   );
 }

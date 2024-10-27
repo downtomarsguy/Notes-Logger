@@ -1,24 +1,18 @@
 import { json } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate } from "@remix-run/react";
-import { useEffect, useState } from "react";
+import { useNavigate } from "@remix-run/react";
+import { useState } from "react";
+import { useLoaderData } from "@remix-run/react";
+import { createServerClient } from '@supabase/auth-helpers-remix';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 
-// import banners
-import lightBanner from "../assets/light-city-banner.jpg";
-import darkBanner from "../assets/dark-city-banner.jpg";
-import swBanner from "../assets/sw-banner.jpg";
-import mountainsBanner from "../assets/mountains-banner.jpg";
+// Import banners
 import mathBanner from "../assets/math-banner.jpg";
 
-// import icons
+// Import icons
 import { IoMdSend } from "react-icons/io";
 
-// import & configure supabase
-import { createClient } from '@supabase/supabase-js';
-const supabaseUrl = 'https://dlyekcnhxiztyoznvuni.supabase.co';
-const supabaseKey = process.env.SUPABASE_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseKey);
-
+// Meta configuration
 export const meta: MetaFunction = () => {
   return [
     { title: "Login" },
@@ -26,24 +20,38 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+interface Passcode {
+  passcode: string;
+}
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const response = new Response();
+  const supabaseClient = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_KEY!,
+    { request, response }
+  );
+
+  const { data } = await supabaseClient.from('passcode').select('*');
+
+  return json(
+    { data },
+    {
+      headers: response.headers,
+    }
+  );
+};
+
 export default function App() {
-  const [pc, setPc] = useState<any[] | null>(null);
   const [inputPasscode, setInputPasscode] = useState("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getCountries();
-  }, []);
-
-  async function getCountries() {
-    const { data } = await supabase.from("passcode").select();
-    setPc(data || []);
-  }
+  const { data } = useLoaderData<{ data: Passcode[] }>(); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); 
+    console.log(JSON.stringify(data, null));
 
-    if (pc && pc.some((item) => item.passcode === inputPasscode)) {
+    if (data && data.length > 0 && inputPasscode === data[0].passcode) {
       navigate("/dashboard");
     } else {
       alert("Invalid passcode. Please try again.");
@@ -67,6 +75,7 @@ export default function App() {
             <span className="mr-2 font-sans text-base">Submit</span>
             <IoMdSend />
           </button>
+          <pre>{JSON.stringify(data, null)}</pre>
         </form>
       </div>
       <div className="w-3/5 relative">
