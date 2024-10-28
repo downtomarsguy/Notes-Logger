@@ -42,7 +42,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   );
 };
 
-
 export default function App() {
   const [inputPc, setInputPc] = useState("");
   const [userIP, setUserIP] = useState("");
@@ -65,7 +64,7 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     if (data && data.length > 0 && inputPc === data[0].passcode) {
       if (userIP) {
         const supabaseClient = createServerClient(
@@ -79,7 +78,7 @@ export default function App() {
           .insert([{ ip: userIP }]);
 
         if (error) {
-          console.error('Error inserting IP address:', error);
+          console.error('Error inserting IPA:', error);
         }
       }
       navigate("/dashboard");
