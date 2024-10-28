@@ -23,7 +23,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     { request, response }
   );
 
-  const { data } = await supabaseClient.from('passcode').select('*');
+  const { data } = await supabaseClient.from('files').select('*');
   
   return json(
     { data, supabaseUrl: process.env.SUPABASE_URL, supabaseKey: process.env.SUPABASE_KEY },
