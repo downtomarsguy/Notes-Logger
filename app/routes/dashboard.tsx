@@ -74,7 +74,7 @@ export default function App() {
   };
   
 
-  function formatFileName(fileName: String) {  
+  const formatFileName = (fileName: String) => {  
     if (fileName.length <= 10 + 4) {
       return fileName;
     }
@@ -84,6 +84,17 @@ export default function App() {
   
     return `${start}..${end}`;
   }
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+  
+    const formattedTitle = inputValue
+      .toLowerCase() 
+      .replace(/\s+/g, '-') 
+      .replace(/[^a-z-]/g, ''); 
+  
+    setTitle(formattedTitle);
+  };
 
   const handleUpload = async () => {
     if (!title) {
@@ -107,9 +118,11 @@ export default function App() {
         { request: new Request(''), response: new Response() }
       );
 
+      const path = title;
+
       const { error } = await supabaseClient
         .from('files')
-        .insert([{ title, fileContent }]);
+        .insert([{ path, fileContent }]);
 
       if (error) {
         console.error('Error inserting file:', error);
@@ -143,14 +156,14 @@ export default function App() {
             <div className="flex flex-row items-center gap-4">
               <span className="w-1/3 text-right font-semibold text-base">Title</span>
               <div className="relative w-full">
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Add Title.."
-                  className={`bg-white bg-opacity-20 px-3 py-2 w-full text-sm font-bold rounded-[3px] font-sans ${titleError ? 'border-rose-500 border' : ''}`}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
+              <input
+                type="text"
+                name="title"
+                placeholder="Add Title.."
+                className={`bg-white bg-opacity-20 px-3 py-2 w-full text-sm font-bold rounded-[3px] font-sans ${titleError ? 'border-rose-500 border' : ''}`}
+                value={title}
+                onChange={handleTitleChange}
+              />
                 {titleError && <FaCircleExclamation className="absolute right-2 top-1/2 transform -translate-y-1/2 text-rose-500" />}
               </div>
             </div>
