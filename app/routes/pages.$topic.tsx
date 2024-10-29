@@ -12,7 +12,7 @@ const parseContent = (content:any) => {
 
   return parts.map((part:any, index:any) => {
     if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={index}>{part.slice(2, -2).trim()}</strong>;
+      return <span key={index} className="font-arima font-bold">{part.slice(2, -2).trim()}</span>;
     } else if (part.startsWith('$$') && part.endsWith('$$')) {
       return (
         <BlockMath key={index}>
@@ -35,12 +35,14 @@ export const meta: MetaFunction = () => {
 export default function App() {
   const { topic } = useParams();
 
-  const content = `  `;
+  const content = `
+  `;
 
   return (
     <div className="flex justify-center">
-      <div className="font-sans w-3/4 mt-16">
-        <h1>{topic}</h1>
+      <div className="w-3/5 mt-24">
+        <h1 className="text-3xl mb-5 font-bold">Geometric Sequences Assignment</h1>
+        <div className="my-4 border-b border-2 border-white opacity-30 mx-1" />
         {parseContent(content)}
       </div>
     </div>
