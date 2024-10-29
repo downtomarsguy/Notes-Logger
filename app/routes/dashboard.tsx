@@ -62,15 +62,17 @@ export default function App() {
     if (file) {
       setFileName(file.name);
       setFileError(false);
-
+  
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result as string;
-        setFileContent(content);
+        const formattedContent = content.replace(/\\/g, '\\\\');
+        setFileContent(formattedContent);
       };
       reader.readAsText(file);
     }
   };
+  
 
   function formatFileName(fileName: String) {  
     if (fileName.length <= 10 + 4) {
