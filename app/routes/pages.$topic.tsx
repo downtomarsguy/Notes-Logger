@@ -97,6 +97,15 @@ const parseContent = (content: string) => {
   });
 };
 
+// header parser
+
+const parseHeader = (topic: string) => {
+  return topic
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export default function App() {
   const { data } = useLoaderData<{ data: File | null, supabaseUrl: string, supabaseKey: string }>();
   const { topic } = useParams();
@@ -105,10 +114,12 @@ export default function App() {
     return <div>Error 404: File not found.</div>;
   }
 
+  const parsedHeader = parseHeader(topic || '');
+
   return (
     <div className="flex justify-center">
       <div className="w-3/5 mt-24">
-        <h1 className="text-3xl mb-5 font-bold arima-font">{topic}</h1>
+        <h1 className="text-3xl mb-5 font-bold arima-font">{parsedHeader}</h1>
         <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
         {parseContent(data.fileContent)}
       </div>
