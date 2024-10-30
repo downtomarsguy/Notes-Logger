@@ -1,49 +1,115 @@
-import { json } from "@remix-run/node";
 import { useParams } from "@remix-run/react";
-import pkg from 'react-katex';
-const { BlockMath } = pkg;
-import 'katex/dist/katex.min.css';
 import type { MetaFunction } from "@remix-run/node";
-
-const parseContent = (content:any) => {
-  const regex = /(\*\*([\s\S]*?)\*\*)|(\$\$([\s\S]*?)\$\$)|([^\*\$]+)/g;
-
-  const parts = content.match(regex) || [];
-
-  return parts.map((part:any, index:any) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <span key={index} className="font-arima font-bold">{part.slice(2, -2).trim()}</span>;
-    } else if (part.startsWith('$$') && part.endsWith('$$')) {
-      return (
-        <BlockMath key={index}>
-          {part.slice(2, -2).trim()}
-        </BlockMath>
-      );
-    } else {
-      return <p key={index}>{part.trim()}</p>;
-    }
-  });
-};
 
 // meta configuration
 export const meta: MetaFunction = () => {
   return [
-    { title: "topic" },
+    { title: "Login" },
+    { name: "description", content: "Notes-Logger Login" },
   ];
 };
 
+// supabase configuration
+import { useLoaderData } from "@remix-run/react";
+import { createServerClient } from '@supabase/auth-helpers-remix';
+import type { LoaderFunctionArgs } from '@remix-run/node';
+import { json } from "@remix-run/node";
+
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const { topic } = params;
+  
+  const response = new Response();
+  const supabaseClient = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_KEY!,
+    { request, response }
+  );
+  
+  const { data, error } = await supabaseClient
+    .from('files')
+    .select('*')
+    .ilike('path', `%${topic}%`)
+    .single();
+
+  if (error) {
+    console.error('Error fetching data:', error);
+    return json({ data: null }, { headers: response.headers });
+  }
+
+  return json(
+    { data, supabaseUrl: process.env.SUPABASE_URL, supabaseKey: process.env.SUPABASE_KEY },
+    {
+      headers: response.headers,
+    }
+  );
+};
+
+interface File {
+  path: string;
+  fileContent: string;
+}
+
+// file parser
+import pkg from 'react-katex';
+const { BlockMath } = pkg;
+import 'katex/dist/katex.min.css';
+
+const parseContent = (content: string) => {
+  const lines = content.split('\n');
+  let inMathBlock = false;
+  let mathContent = '';
+
+  return lines.map((line, index) => {
+    const trimmedLine = line.trim();
+
+    if (trimmedLine.startsWith('$$')) {
+      if (inMathBlock) {
+        inMathBlock = false;
+        const mathToRender = mathContent + '\n';
+        mathContent = '';
+        return (
+          <BlockMath key={index}>
+            {mathToRender.trim()}
+          </BlockMath>
+        );
+      } else {
+        inMathBlock = true;
+        mathContent = '';
+        return null;
+      }
+    }
+
+    if (inMathBlock) {
+      mathContent += trimmedLine + '\n';
+      return null;
+    }
+
+    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+      return <span key={index} className="font-arima font-bold">{trimmedLine.slice(2, -2).trim()}</span>;
+    }
+
+    if (trimmedLine === '') {
+      return <br key={index} />;
+    }
+
+    return <p key={index}>{trimmedLine}</p>;
+  });
+};
+
 export default function App() {
+  const { data } = useLoaderData<{ data: File | null, supabaseUrl: string, supabaseKey: string }>();
   const { topic } = useParams();
 
-  const content = `
-  `;
+  if (!data) {
+    return <div>Error 404: File not found.</div>;
+  }
 
   return (
     <div className="flex justify-center">
       <div className="w-3/5 mt-24">
-        <h1 className="text-3xl mb-5 font-bold">Geometric Sequences Assignment</h1>
-        <div className="my-4 border-b border-2 border-white opacity-30 mx-1" />
-        {parseContent(content)}
+        <h1 className="text-3xl mb-5 font-bold font-arima">{topic}</h1>
+        <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
+        {parseContent(data.fileContent)}
       </div>
     </div>
   );
