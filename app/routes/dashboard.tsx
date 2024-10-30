@@ -62,19 +62,17 @@ export default function App() {
     if (file) {
       setFileName(file.name);
       setFileError(false);
-  
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result as string;
-        const formattedContent = content.replace(/\\/g, '\\\\');
-        setFileContent(formattedContent);
+        setFileContent(content);
       };
       reader.readAsText(file);
     }
   };
-  
 
-  const formatFileName = (fileName: String) => {  
+  function formatFileName(fileName: String) {  
     if (fileName.length <= 10 + 4) {
       return fileName;
     }
@@ -84,17 +82,6 @@ export default function App() {
   
     return `${start}..${end}`;
   }
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-  
-    const formattedTitle = inputValue
-      .toLowerCase() 
-      .replace(/\s+/g, '-') 
-      .replace(/[^a-z-]/g, ''); 
-  
-    setTitle(formattedTitle);
-  };
 
   const handleUpload = async () => {
     if (!title) {
@@ -156,14 +143,14 @@ export default function App() {
             <div className="flex flex-row items-center gap-4">
               <span className="w-1/3 text-right font-semibold text-base">Title</span>
               <div className="relative w-full">
-              <input
-                type="text"
-                name="title"
-                placeholder="Add Title.."
-                className={`bg-white bg-opacity-20 px-3 py-2 w-full text-sm font-bold rounded-[3px] font-sans ${titleError ? 'border-rose-500 border' : ''}`}
-                value={title}
-                onChange={handleTitleChange}
-              />
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Add Title.."
+                  className={`bg-white bg-opacity-20 px-3 py-2 w-full text-sm font-bold rounded-[3px] font-sans ${titleError ? 'border-rose-500 border' : ''}`}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
                 {titleError && <FaCircleExclamation className="absolute right-2 top-1/2 transform -translate-y-1/2 text-rose-500" />}
               </div>
             </div>
