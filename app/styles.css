@@ -1,3 +1,7 @@
 .dashboard-opacity {
     background: linear-gradient(to bottom right, rgba(248, 250, 252, 0.25), rgba(248, 250, 252, 0.10));
 }
+
+.arima-font {
+    font-family: Arima, sans-serif !important;
+}
