@@ -137,7 +137,7 @@ export default function App() {
       </div>
 
       <div className="flex justify-center">
-        <div className="w-3/5 mt-16">
+        <div className="w-3/5 mt-24">
           <h1 className="text-3xl mb-5 font-bold arima-font">{parsedHeader}</h1>
           <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
           {parseContent(data.fileContent)}
