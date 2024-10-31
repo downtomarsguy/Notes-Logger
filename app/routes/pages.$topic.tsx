@@ -88,7 +88,7 @@ const parseContent = (content: string) => {
     }
 
     if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
-      return <span key={index} className="font-arima font-bold">{trimmedLine.slice(2, -2).trim()}</span>;
+      return <span key={index} className="arima-font font-bold">{trimmedLine.slice(2, -2).trim()}</span>;
     }
 
     if (trimmedLine === '') {
