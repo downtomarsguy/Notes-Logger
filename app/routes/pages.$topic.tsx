@@ -1,6 +1,11 @@
-import { useParams } from "@remix-run/react";
+
+// general imports
+import { useParams, Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
 import "../styles.css"
+
+// import icons
+import { AiFillHome } from "react-icons/ai";
 
 // meta configuration
 export const meta: MetaFunction = () => {
@@ -124,11 +129,19 @@ export default function App() {
   const parsedHeader = parseHeader(topic || '');
 
   return (
-    <div className="flex justify-center">
-      <div className="w-3/5 mt-24">
-        <h1 className="text-3xl mb-5 font-bold arima-font">{parsedHeader}</h1>
-        <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
-        {parseContent(data.fileContent)}
+    <div className="relative">
+      <div className="sticky top-8 left-8 p-3 z-10 bg-slate-900 w-min rounded-md">
+        <Link to="/">
+          <AiFillHome className="text-white text-2xl cursor-pointer" />
+        </Link>
+      </div>
+
+      <div className="flex justify-center">
+        <div className="w-3/5 mt-24">
+          <h1 className="text-3xl mb-5 font-bold arima-font">{parsedHeader}</h1>
+          <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
+          {parseContent(data.fileContent)}
+        </div>
       </div>
     </div>
   );
