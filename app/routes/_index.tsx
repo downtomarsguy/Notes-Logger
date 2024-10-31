@@ -10,11 +10,11 @@ import { RiTailwindCssFill } from "react-icons/ri";
 import { IoLogoVercel } from "react-icons/io5";
 
 const technologies = [
-  { icon: <RiRemixRunFill key="remix" size={23} />, name: "Remix" },
-  { icon: <RiReactjsFill key="react" size={25} />, name: "React" },
-  { icon: <BiLogoTypescript key="typescript" size={25} />, name: "TypeScript" },
-  { icon: <RiSupabaseFill key="supabase" size={20} />, name: "Supabase" },
-  { icon: <RiTailwindCssFill key="tailwind" size={25} />, name: "Tailwind CSS" },
+  { icon: <RiRemixRunFill size={23} />, name: "Remix" },
+  { icon: <RiReactjsFill size={25} />, name: "React" },
+  { icon: <BiLogoTypescript size={25} />, name: "TypeScript" },
+  { icon: <RiSupabaseFill size={20} />, name: "Supabase" },
+  { icon: <RiTailwindCssFill size={25} />, name: "Tailwind CSS" },
   { icon: <IoLogoVercel key="vercel" size={20} />, name: "Vercel" },
 ];
 
