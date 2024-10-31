@@ -4,8 +4,10 @@ import "../styles.css"
 
 // meta configuration
 export const meta: MetaFunction = () => {
+  const { topic } = useParams();
+
   return [
-    { title: "Login" },
+    { title: parseHeader(topic || "pages") },
     { name: "description", content: "Notes-Logger Login" },
   ];
 };
@@ -98,7 +100,6 @@ const parseContent = (content: string) => {
 };
 
 // header parser
-
 const parseHeader = (topic: string) => {
   return topic
     .split('-')
