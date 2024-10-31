@@ -112,7 +112,13 @@ export default function App() {
   const { topic } = useParams();
 
   if (!data) {
-    return <div>Error 404: File not found.</div>;
+    return (
+      <div className="flex justify-center">
+        <div className="w-3/5 mt-24">
+          <h1 className="text-3xl mb-5 font-bold arima-font">Error 404: Page Not Found</h1>
+        </div>
+      </div>
+    );
   }
 
   const parsedHeader = parseHeader(topic || '');
