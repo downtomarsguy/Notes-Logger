@@ -6,6 +6,7 @@ import "../styles.css"
 
 // import icons
 import { AiFillHome } from "react-icons/ai";
+import { FaDownload } from "react-icons/fa6";
 
 // meta configuration
 export const meta: MetaFunction = () => {
@@ -116,6 +117,20 @@ export default function App() {
   const { data } = useLoaderData<{ data: File | null, supabaseUrl: string, supabaseKey: string }>();
   const { topic } = useParams();
 
+  const handleDownload = () => {
+    if (!data.fileContent) return;
+
+    const blob = new Blob([data.fileContent], { type: 'text/markdown'});
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.href = url;
+    link.download = `${topic}.md` || `untitled.md`;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+  }
+
   if (!data) {
     return (
       <div className="flex justify-center">
@@ -141,6 +156,11 @@ export default function App() {
           <h1 className="text-3xl mb-5 font-bold arima-font">{parsedHeader}</h1>
           <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
           {parseContent(data.fileContent)}
+          <div className="my-4 border-b border-[1.5px] border-white opacity-30 mx-1" />
+          <button onClick={handleDownload} className="flex items-center bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 px-3 py-2 mt-10 rounded-sm">
+            <span className="mr-2 font-sans text-base">Download Raw Markdown File</span>
+            <FaDownload />
+          </button>
         </div>
       </div>
     </div>
