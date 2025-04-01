@@ -131,7 +131,10 @@ const parseContent = (content: string) => {
       return null;
     }
 
-    // Bold text detection
+    if (trimmedLine === "") {
+      return <p key={index}>&nbsp;</p>;
+    }
+
     const parts = trimmedLine.split(/\*\*(.*?)\*\*/g);
     return (
       <p key={index}>
