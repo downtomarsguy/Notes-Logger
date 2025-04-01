@@ -1,5 +1,5 @@
 // general imports
-import React from "react"; // Ensure React is imported
+import React from "react";
 import { useParams, Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
 import "../styles.css";
@@ -85,7 +85,6 @@ const parseContent = (content: string) => {
   return lines.map((line, index) => {
     const trimmedLine = line.trim();
 
-    // Match image syntax (e.g., ![alt](image_url))
     const imageRegex = /!\[.*?\]\((.*?)\)/;
     const imageMatch = trimmedLine.match(imageRegex);
     if (imageMatch) {
@@ -132,19 +131,22 @@ const parseContent = (content: string) => {
       return null;
     }
 
-    if (trimmedLine.startsWith("**") && trimmedLine.endsWith("**")) {
-      return (
-        <span key={index} className="arima-font font-bold">
-          {trimmedLine.slice(2, -2).trim()}
-        </span>
-      );
-    }
-
-    if (trimmedLine === "") {
-      return <br key={index} />;
-    }
-
-    return <p key={index}>{trimmedLine}</p>;
+    // Bold text detection
+    const parts = trimmedLine.split(/\*\*(.*?)\*\*/g);
+    return (
+      <p key={index}>
+        {parts.map((part, idx) => {
+          if (idx % 2 !== 0) {
+            return (
+              <span key={idx} className="arima-font font-bold">
+                {part}
+              </span>
+            );
+          }
+          return part;
+        })}
+      </p>
+    );
   });
 };
 
