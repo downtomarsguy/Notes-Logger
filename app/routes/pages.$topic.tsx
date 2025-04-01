@@ -1,4 +1,5 @@
 // general imports
+import React from "react"; // Ensure React is imported
 import { useParams, Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
 import "../styles.css";
@@ -66,6 +67,16 @@ import pkg from "react-katex";
 const { BlockMath } = pkg;
 import "katex/dist/katex.min.css";
 
+// header levels hashmap
+const headerLevelMap: { [key: number]: string } = {
+  1: "text-5xl",
+  2: "text-4xl",
+  3: "text-3xl",
+  4: "text-2xl",
+  5: "text-xl",
+  6: "text-lg",
+};
+
 const parseContent = (content: string) => {
   const lines = content.split("\n");
   let inMathBlock = false;
@@ -74,6 +85,7 @@ const parseContent = (content: string) => {
   return lines.map((line, index) => {
     const trimmedLine = line.trim();
 
+    // Match image syntax (e.g., ![alt](image_url))
     const imageRegex = /!\[.*?\]\((.*?)\)/;
     const imageMatch = trimmedLine.match(imageRegex);
     if (imageMatch) {
@@ -85,6 +97,20 @@ const parseContent = (content: string) => {
           alt=""
           className="my-4 max-w-full h-auto"
         />
+      );
+    }
+
+    const headerMatch = trimmedLine.match(/^#{1,6}\s/);
+    if (headerMatch) {
+      const headerLevel = headerMatch[0].trim().length;
+      const headerText = trimmedLine.slice(headerLevel).trim();
+
+      const headerClass = headerLevelMap[headerLevel] || "text-base";
+
+      return React.createElement(
+        `h${headerLevel}` as keyof JSX.IntrinsicElements,
+        { key: index, className: `${headerClass} font-bold` },
+        headerText
       );
     }
 
@@ -106,11 +132,7 @@ const parseContent = (content: string) => {
       return null;
     }
 
-    console.log("hi");
-
     if (trimmedLine.startsWith("**") && trimmedLine.endsWith("**")) {
-      console.log("hello there");
-
       return (
         <span key={index} className="arima-font font-bold">
           {trimmedLine.slice(2, -2).trim()}
